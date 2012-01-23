@@ -1,10 +1,3 @@
-var table = new Array (256),
-    i = 0
-
-table[i] = 0
-while (++i !== 256)
-  table[i] = (i & 1) + table[i >>> 1]
-
 function bit (n, i) {
   return (i < 32 ? n >>> i : Math.floor (n / 4294967296) >>> (i - 32)) & 1
 }
@@ -23,11 +16,15 @@ function pack (bits) {
   return x
 }
 
-function distance (a, b) {
-  var high = Math.floor (a / 4294967296) ^ Math.floor (b / 4294967296),
-      low = a ^ b
+function count (i) {
+  i -= ((i >>> 1) & 0x55555555)
+  i = (i & 0x33333333) + ((i >>> 2) & 0x33333333)
+  return (((i + (i >> 4)) & 0x0F0F0F0F) * 0x01010101) >>> 24
+}
 
-  return table[low & 255] + table[(low >>> 8) & 255] +
-         table[(low >>> 16) & 255] + table[low >>> 24] + table[high & 255] +
-         table[(high >>> 8) & 255] + table[high >>> 16]
+function distance (a, b) {
+  var low = a ^ b,
+      high = (a / 4294967296) ^ (b / 4294967296)
+
+  return count (low) + (high && count (high))
 }
