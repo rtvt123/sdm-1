@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+  <head>
+  </head>
+
+  <body>
+    <canvas id="canvas" width="256" height="256">
+    </canvas>
+
+    <script type="text/javascript" src="js/alea.js"></script>
+    <script type="text/javascript" src="js/numbers.js"></script>
+    <script type="text/javascript" src="js/sdm.js"></script>
+
+    <script type="text/javascript">
+      /* Create and initialize an SDM. */
+      var sdm = new Array (16 * 1024)
+      sdmReset (sdm)
+
+      /* Store 16 random (16-bit) colors into the SDM. */
+      var i = 16,
+          k
+
+      while (i--) {
+        k = Math.floor (Math.random () * 0x10000)
+        sdmPut (sdm, k, k, 16, 7)
+      }
+
+      /* Get a handle on the page's canvas. */
+      var canvas = document.getElementById ("canvas"),
+          ctx = canvas.getContext ("2d"),
+          id = ctx.getImageData (0, 0, canvas.width, canvas.height),
+          data = id.data,
+          a, b
+
+      /* In one thread, redraw the screen. */
+      a = setInterval (function () {
+        ctx.putImageData (id, 0, 0)
+      }, 1000)
+
+      /* In another thread, ask the SDM for the color closest to the current
+       * pixel offset, and plot the response. */
+      i = data.length
+      b = setInterval (function () {
+        var k = sdmGet (sdm, i * 0.25 - 1, 16, 7)
+
+        data[--i] = 255
+        data[--i] = (k  << 3) & 0xf8
+        data[--i] = (k >>> 3) & 0xfc
+        data[--i] = (k >>> 8) & 0xf8
+
+        /* If we've drawn every pixel, then stop this thread. */
+        if (!i) {
+          clearInterval (a)
+          clearInterval (b)
+        }
+      }, 0)
+    </script>
+  </body>
+</html>

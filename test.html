@@ -1,0 +1,163 @@
+<!doctype html>
+<html>
+  <head>
+    <title>SDM Test Suite</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css"
+      href="http://code.jquery.com/qunit/git/qunit.css"/>
+    <script type="text/javascript"
+      src="http://code.jquery.com/jquery-latest.js"></script>
+    <script type="text/javascript"
+      src="http://code.jquery.com/qunit/git/qunit.js"></script>
+    <script type="text/javascript" src="js/numbers.js"></script>
+    <script type="text/javascript" src="js/alea.js"></script>
+    <script type="text/javascript" src="js/sdm.js"></script>
+  </head>
+
+  <body>
+    <h1 id="qunit-header">SDM Test Suite</h1>
+    <div id="qunit-banner"></div>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+
+    <script type="text/javascript">
+      module ("numbers")
+
+      test ("bit() should extract the requested bit from a Number", function () {
+        var n = 0x123456789abcde,
+            bits = [
+              0, 1, 1, 1,
+              1, 0, 1, 1,
+              0, 0, 1, 1,
+              1, 1, 0, 1,
+              0, 1, 0, 1,
+              1, 0, 0, 1,
+              0, 0, 0, 1,
+              1, 1, 1, 0,
+              0, 1, 1, 0,
+              1, 0, 1, 0,
+              0, 0, 1, 0,
+              1, 1, 0, 0,
+              0, 1, 0, 0,
+              1
+            ],
+            i = bits.length
+
+        while (i--)
+          equal (bit (n, i), bits[i])
+      })
+
+      test ("pack() should pack a thresholded array into a Number", function () {
+        equal (
+          pack ([
+            0, 1, 1, 1,
+            1, 0, 1, 1,
+            0, 0, 1, 1,
+            1, 1, 0, 1,
+            0, 1, 0, 1,
+            1, 0, 0, 1,
+            0, 0, 0, 1,
+            1, 1, 1, 0,
+            0, 1, 1, 0,
+            1, 0, 1, 0,
+            0, 0, 1, 0,
+            1, 1, 0, 0,
+            0, 1, 0, 0,
+            1
+          ]), 
+          0x123456789abcde
+        )
+      })
+
+      test ("distance() should return the Hamming distance between two Numbers", function () {
+        equal (distance (0, 0), 0)
+        equal (distance (0x123456789abcde, 0xbabedeadbeef), 23)
+      })
+
+      module ("alea")
+
+      test ("alea() should return a repeatable sequence of 32-bit pseudorandom numbers", function () {
+        var seed = [
+              0.76758391689509150,
+              0.54703062842600050,
+              0.08701058942824602,
+              1
+            ]
+
+        equal (alea (seed), 3187987181)
+        equal (alea (seed), 2562603855)
+        equal (alea (seed), 1961154802)
+        equal (alea (seed), 1205218735)
+        equal (alea (seed),  290224215)
+      })
+
+      test ("random() should return a pseudorandom number with the given number of bits of precision", function () {
+        var seed = [
+              0.76758391689509150,
+              0.54703062842600050,
+              0.08701058942824602,
+              1
+            ]
+
+        function trial (bits) {
+          var i = 1024,
+              max = random (seed, bits)
+
+          while (--i)
+            max = Math.max (random (seed, bits), max)
+
+          ok (max >= Math.pow (2, bits - 1))
+          ok (max < Math.pow (2, bits))
+        }
+
+        trial (53)
+        trial (48)
+        trial (32)
+        trial (24)
+        trial (16)
+        trial (8)
+        trial (4)
+        trial (2)
+        trial (1)
+      })
+
+      module ("sdm")
+
+      test ("sdmReset() should format an array", function () {
+        var sdm = new Array (10)
+        sdmReset (sdm)
+        deepEqual (sdm, [128, 128, 128, 128, 128, 128, 128, 128, 128, 128])
+      })
+
+      test ("registerPut() should increment or decrement values in an array based off of the bits in the given value", function () {
+        var sdm = [128, 128, 128, 128, 128, 128, 128, 128, 128, 128]
+        registerPut (sdm, 0, 0xa7, 8)
+        deepEqual (sdm, [129, 129, 129, 127, 127, 129, 127, 129, 128, 128])
+      })
+
+      test ("registerGet() should collect the sum of array cells in a new array", function () {
+        var sdm = [129, 129, 129, 127, 127, 129, 127, 129, 128, 128],
+            accumulator = [0, 0, 0, 0, 0, 0, 0, 0]
+
+        registerGet (sdm, 0, accumulator)
+        deepEqual (accumulator, [1, 1, 1, -1, -1, 1, -1, 1])
+      })
+
+      test ("sdmPut() and sdmGet() should store and retrieve exact key-value pairs", function () {
+        var sdm = new Array (1024)
+
+        sdmReset (sdm)
+        sdmPut (sdm, 0xdeadbeef, 0xd15ea5e, 32, 14)
+        equal (sdmGet (sdm, 0xdeadbeef, 32, 14), 0xd15ea5e)
+      })
+
+      test ("sdmPut() and sdmGet() should store and retrieve fuzzy key-value pairs", function () {
+        var sdm = new Array (1024)
+
+        sdmReset (sdm)
+        sdmPut (sdm, 0xdeadbeef, 0xd15ea5e, 32, 14)
+        equal (sdmGet (sdm, 0xdeadbea7, 32, 14), 0xd15ea5e)
+      })
+    </script>
+  </body>
+</html>
