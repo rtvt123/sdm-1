@@ -16,7 +16,7 @@
           ctx = canvas.getContext ("2d"),
           id = ctx.getImageData (0, 0, canvas.width, canvas.height),
           data = id.data,
-          sdm = ctx.getImageData (0, 0, 64, 64).data,
+          sdm = new Array (16384),
           i = 16,
           k, a, b
 

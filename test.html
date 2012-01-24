@@ -126,20 +126,20 @@
       test ("sdmReset() should format an array", function () {
         var sdm = new Array (10)
         sdmReset (sdm)
-        deepEqual (sdm, [128, 128, 128, 128, 128, 128, 128, 128, 128, 128])
+        deepEqual (sdm, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
       })
 
       test ("registerPut() should increment or decrement values in an array based off of the bits in the given value", function () {
         var sdm = [128, 128, 128, 128, 128, 128, 128, 128, 128, 128]
-        registerPut (sdm, 0, 0xa7, 8)
+        registerPut (sdm, 8, 0xa7, 8)
         deepEqual (sdm, [129, 129, 129, 127, 127, 129, 127, 129, 128, 128])
       })
 
       test ("registerGet() should collect the sum of array cells in a new array", function () {
-        var sdm = [129, 129, 129, 127, 127, 129, 127, 129, 128, 128],
+        var sdm = [1, 1, 1, -1, -1, 1, -1, 1, 0, 0],
             accumulator = [0, 0, 0, 0, 0, 0, 0, 0]
 
-        registerGet (sdm, 0, accumulator)
+        registerGet (sdm, 8, accumulator)
         deepEqual (accumulator, [1, 1, 1, -1, -1, 1, -1, 1])
       })
 

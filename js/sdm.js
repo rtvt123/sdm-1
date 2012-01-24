@@ -1,24 +1,20 @@
-function fill (arr, k) {
+function sdmReset (arr) {
   var i = arr.length
 
   while (i--)
-    arr[i] = k
-}
-
-function sdmReset (arr) {
-  fill (arr, 128)
+    arr[i] = 0
 }
 
 function registerPut (arr, offset, value, bits) {
-  while (bits--)
-    arr[offset + bits] += bit (value, bits) ? 1 : -1
+  while (bits)
+    arr[--offset] += bit (value, --bits) ? 1 : -1
 }
 
 function registerGet (arr, offset, accumulator) {
   var i = accumulator.length
 
-  while (i--)
-    accumulator[i] += arr[offset + i] - 128
+  while (i)
+    accumulator[--i] += arr[--offset]
 }
 
 function sdmPut (arr, key, value, bits, range) {
@@ -31,10 +27,10 @@ function sdmPut (arr, key, value, bits, range) {
       ]
 
   while (i) {
-    i -= bits
-
     if (distance (key, random (seed, bits)) <= range)
       registerPut (arr, i, value, bits)
+
+    i -= bits
   }
 }
 
@@ -48,13 +44,13 @@ function sdmGet (arr, key, bits, range) {
         1
       ]
 
-  fill (accumulator, 0)
+  sdmReset (accumulator)
 
   while (i) {
-    i -= bits
-
     if (distance (key, random (seed, bits)) <= range)
       registerGet (arr, i, accumulator)
+
+    i -= bits
   }
 
   return pack (accumulator)
