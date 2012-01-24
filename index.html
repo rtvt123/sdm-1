@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
   <head>
+    <title>SDM Test</title>
   </head>
 
   <body>
@@ -25,7 +26,7 @@
       /* Store 16 random (16-bit) colors into the SDM. */
       while (i--) {
         k = Math.floor (Math.random () * 0x10000)
-        sdmPut (sdm, k, k, 16, 7)
+        sdmPut (sdm, k, k, 16, 6)
       }
 
       i = data.length
@@ -42,12 +43,17 @@
       /* In another thread, ask the SDM for the color closest to the current
        * pixel offset, and plot the response. */
       b = setInterval (function () {
-        var k = sdmGet (sdm, i * 0.25 - 1, 16, 7)
+        var j = 8,
+            k
 
-        data[--i] = 255
-        data[--i] = (k  << 3) & 0xf8
-        data[--i] = (k >>> 3) & 0xfc
-        data[--i] = (k >>> 8) & 0xf8
+        while (j--) {
+          k = sdmGet (sdm, i * 0.25 - 1, 16, 6)
+
+          data[--i] = 255
+          data[--i] = (k  << 3) & 0xf8
+          data[--i] = (k >>> 3) & 0xfc
+          data[--i] = (k >>> 8) & 0xf8
+        }
 
         /* If we've drawn every pixel, then stop this thread. */
         if (!i)
