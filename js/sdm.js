@@ -1,3 +1,5 @@
+"use strict"
+
 function sdmReset (arr) {
   var i = arr.length
 

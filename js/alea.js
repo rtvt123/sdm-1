@@ -1,3 +1,5 @@
+"use strict"
+
 function alea (seed) {
   var t = seed[2] * 2091639 + seed[3] * 2.3283064365386963e-10
 
