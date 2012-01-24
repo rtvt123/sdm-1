@@ -1,7 +1,7 @@
 "use strict"
 
 function bit (n, i) {
-  return (i < 32 ? n >>> i : Math.floor (n / 4294967296) >>> (i - 32)) & 1
+  return (i < 32 ? n >>> i : (n / 4294967296) >>> (i - 32)) & 1
 }
 
 function pack (bits) {
