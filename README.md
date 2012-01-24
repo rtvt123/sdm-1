@@ -1,9 +1,22 @@
-As it turns out, you can store 33 ternary digits quite comfortably into a
-single JavaScript Number, using `parseInt` and `toString` for conversion. (This
-is because 53 bits of precision can store 33 ternary digits.) What can we do
-with 33 digits? It's enough to fit 6x5 Go at the largest... so perhaps training
-an SDM to play 5x5 Go is an adequate starting point for a tech demo?
+1.  JavaScript Numbers are defined as 64-bit IEEE floating-point numbers.
+2.  64-bit IEEE floating-point numbers have 53 bits of significand precision.
+3.  53 bits can encode up to 33 ternary digits.
+4.  Therefore, we can store a ternary-digit vector of 33 cells in a single
+    JavaScript Number. Furthermore, we can utilize JavaScript's `parseInt` and
+    `toString` methods to convert between representations.
 
-Even simpler, we might try to teach it Tic-Tac-Toe and see how well that goes.
-If it's successful, then we might have a shot. Tic-Tac-Toe fits in a short (16
-bits), thus making life pretty simple.
+Many two-player abstract strategy games can be ternary-encoded, with the
+following encoding:
+
+*   0 represents an empty location on the board.
+*   1 represents a location containing a black pawn.
+*   2 represents a location containing a white pawn.
+
+Therefore, it is trivial to encode games of these kinds that have fewer than
+33 board locations into a single JavaScript Number. Examples of such games:
+
+*   [Bear games](http://en.wikipedia.org/wiki/Bear_games)
+*   [Checkers](http://en.wikipedia.org/wiki/English_draughts)
+*   [Nine Men's Morris](http://en.wikipedia.org/wiki/Nine_Men%27s_Morris)
+*   [Small-Board Go](http://senseis.xmp.net/?SmallBoardGo) (and Capture Go)
+*   [Tic-Tac-Toe](http://en.wikipedia.org/wiki/Tic-tac-toe)

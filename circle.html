@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Kanerva's SDM Test</title>
+
+    <style type="text/css">
+      canvas {
+        width: 528px;
+        height: 144px;
+        border: 1px solid #eee;
+      }
+    </style>
+  </head>
+
+  <body>
+    <canvas id="canvas" width="33" height="9">
+    </canvas>
+
+    <script type="text/javascript" src="js/alea.js"></script>
+    <script type="text/javascript" src="js/numbers.js"></script>
+    <script type="text/javascript" src="js/sdm.js"></script>
+
+    <script type="text/javascript">
+      "use strict"
+
+      function draw (id, bits) {
+        var data = id.data,
+            i = data.length,
+            j = i * 0.25
+
+        while (j--) {
+          data[--i] = bit (bits, j) * 255
+          data[--i] = 0
+          data[--i] = 0
+          data[--i] = 0
+        }
+      }
+
+      function noisy (bits) {
+        var flip = {},
+            i = 10,
+            x = 0
+
+        while (i--)
+          flip[Math.floor (Math.random () * 49)] = true
+
+        for (i = 49; i--; ) {
+          x *= 2
+          x += bit (bits, i) * (flip[i] ? -1 : 1)
+        }
+
+        return x
+      }
+
+      var canvas = document.getElementById ("canvas"),
+          ctx = canvas.getContext ("2d"),
+          id = ctx.getImageData (0, 0, 7, 7),
+          sdm = new Array (16 * 49 * 50),
+          circle = 0x71f63c78df1c,
+          i = 16,
+          c
+
+      sdmReset (sdm)
+
+      /* Store 16 noisy images. */
+      while (i--) {
+        c = noisy (circle)
+        sdmPut (sdm, c, c, 49, 22)
+      }
+
+      /* Get a tenth noisy image, and draw it. */
+      c = noisy (circle)
+      draw (id, c)
+      ctx.putImageData (id, 1, 1)
+
+      /* Retrieve the image from the SDM and draw it. */
+      c = sdmGet (sdm, c, 49, 22)
+      draw (id, c)
+      ctx.putImageData (id, 9, 1)
+
+      /* Do it again. */
+      c = sdmGet (sdm, c, 49, 22)
+      draw (id, c)
+      ctx.putImageData (id, 17, 1)
+
+      /* Draw the prototype. */
+      draw (id, circle)
+      ctx.putImageData (id, 25, 1)
+    </script>
+  </body>
+</html>
