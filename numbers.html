@@ -5,15 +5,15 @@
 
     <style type="text/css">
       canvas {
-        width: 400px;
-        height: 144px;
+        width: 880px;
+        height: 176px;
         border: 1px solid #eee;
       }
     </style>
   </head>
 
   <body>
-    <canvas id="canvas" width="25" height="9">
+    <canvas id="canvas" width="55" height="11">
     </canvas>
 
     <script type="text/javascript" src="js/alea.js"></script>
@@ -26,10 +26,11 @@
       function draw (id, bits) {
         var data = id.data,
             i = data.length,
-            j = i * 0.25
+            j = i * 0.25,
+            k = j - 1
 
         while (j--) {
-          data[--i] = bit (bits, j) * 255
+          data[--i] = bit (bits, k - j) * 255
           data[--i] = 0
           data[--i] = 0
           data[--i] = 0
@@ -55,36 +56,42 @@
 
       var canvas = document.getElementById ("canvas"),
           ctx = canvas.getContext ("2d"),
-          id = ctx.getImageData (0, 0, 7, 7),
-          sdm = new Array (16 * 49 * 50),
-          circle = 0x71f63c78df1c,
-          i = 15,
-          c
+          id = ctx.getImageData (0, 0, 5, 9),
+          sdm = new Array (11 * 45 * 128),
+          one = 0x4610842008e,
+          two = 0xe8c426443b3,
+          three = 0x1f884460c62e,
+          four = 0x42201297c42,
+          five = 0x1f8c3c10c62e,
+          six = 0x2220d18c62e,
+          seven = 0x1f8842220084,
+          eight = 0xe8c5d18c62e,
+          nine = 0xe8c63170888,
+          a = 14,
+          c, i
 
       sdmReset (sdm)
-      sdmPut (sdm, 0, 0, 49, 22)
-
-      /* Store 16 noisy images. */
-      while (i--) {
-        c = noisy (circle, 49)
-        sdmPut (sdm, c, c, 49, 22)
-      }
+      sdmPut (sdm,     0,     0, 45, a)
+      sdmPut (sdm,   one,   two, 45, a)
+      sdmPut (sdm,   two, three, 45, a)
+      sdmPut (sdm, three,  four, 45, a)
+      sdmPut (sdm,  four,  five, 45, a)
+      sdmPut (sdm,  five,   six, 45, a)
+      sdmPut (sdm,   six, seven, 45, a)
+      sdmPut (sdm, seven, eight, 45, a)
+      sdmPut (sdm, eight,  nine, 45, a)
+      sdmPut (sdm,  nine,     0, 45, a)
 
       setInterval (function () {
-        /* Get a tenth noisy image, and draw it. */
-        c = noisy (circle, 49)
+        c = noisy (one, 45)
         draw (id, c)
         ctx.putImageData (id, 1, 1)
 
-        /* Retrieve the image from the SDM and draw it. */
-        c = sdmGet (sdm, c, 49, 22)
-        draw (id, c)
-        ctx.putImageData (id, 9, 1)
-
-        /* Do it again. */
-        c = sdmGet (sdm, c, 49, 22)
-        draw (id, c)
-        ctx.putImageData (id, 17, 1)
+        for (i = 1; i !== 9; ++i) {
+          c = sdmGet (sdm, c, 45, a)
+          draw (id, c)
+          ctx.putImageData (id, i * 6 + 1, 1)
+        }
       }, 125)
     </script>
   </body>
