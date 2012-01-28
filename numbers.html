@@ -55,7 +55,7 @@
       var canvas = document.getElementById ("canvas"),
           ctx = canvas.getContext ("2d"),
           id = ctx.getImageData (0, 0, 5, 9),
-          sdm = new Array (11 * 45 * 256),
+          sdm = new Array (8 * 45 * 512),
           one = 0xe21084210c4,
           two = 0x19b844c8462e,
           three = 0xe8c60c4423f,
@@ -69,7 +69,6 @@
           c, i
 
       sdmReset (sdm)
-      sdmPut (sdm,     0,     0, 45, a)
       sdmPut (sdm,   one,   two, 45, a)
       sdmPut (sdm,   two, three, 45, a)
       sdmPut (sdm, three,  four, 45, a)
@@ -78,7 +77,6 @@
       sdmPut (sdm,   six, seven, 45, a)
       sdmPut (sdm, seven, eight, 45, a)
       sdmPut (sdm, eight,  nine, 45, a)
-      sdmPut (sdm,  nine,     0, 45, a)
 
       setInterval (function () {
         c = noisy (one, 45)
