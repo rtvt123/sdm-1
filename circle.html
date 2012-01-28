@@ -19,37 +19,10 @@
     <script type="text/javascript" src="js/alea.js"></script>
     <script type="text/javascript" src="js/numbers.js"></script>
     <script type="text/javascript" src="js/sdm.js"></script>
+    <script type="text/javascript" src="js/canvas.js"></script>
 
     <script type="text/javascript">
       "use strict"
-
-      function draw (id, bits) {
-        var data = id.data,
-            i = data.length,
-            j = i * 0.25
-
-        while (j--) {
-          data[--i] = bit (bits, j) * 255
-          i -= 3
-        }
-      }
-
-      function noisy (bits, n) {
-        var arr = new Array (n),
-            i = n,
-            j
-
-        while (i--)
-          arr[i] = bit (bits, i)
-
-        i = Math.floor (n * 0.2)
-        while (i--) {
-          j = Math.floor (Math.random () * n)
-          arr[j] = 1 - arr[j]
-        }
-
-        return pack (arr)
-      }
 
       var canvas = document.getElementById ("canvas"),
           ctx = canvas.getContext ("2d"),
@@ -64,13 +37,13 @@
 
       /* Store 16 noisy images. */
       while (i--) {
-        c = noisy (circle, 49)
+        c = noise (circle, 49, 9)
         sdmPut (sdm, c, c, 49, 22)
       }
 
       setInterval (function () {
         /* Get a tenth noisy image, and draw it. */
-        c = noisy (circle, 49)
+        c = noise (circle, 49, 9)
         draw (id, c)
         ctx.putImageData (id, 1, 1)
 

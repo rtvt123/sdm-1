@@ -30,3 +30,18 @@ function distance (a, b) {
 
   return count (low) + (high && count (high))
 }
+
+function noise (bits, n, k) {
+  var arr = new Array (n),
+      i = n
+
+  while (i--)
+    arr[i] = bit (bits, i)
+
+  while (k--) {
+    i = Math.floor (Math.random () * n)
+    arr[i] = 1 - arr[i]
+  }
+
+  return pack (arr)
+}
