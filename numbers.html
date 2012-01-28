@@ -36,8 +36,7 @@
           six = 0xe8c63170888,
           seven = 0x4210888423f,
           eight = 0xe8c6317462e,
-          nine = 0x2221d18c62e,
-          c, i
+          nine = 0x2221d18c62e
 
       sdmReset (sdm, 45, 14)
       sdmPut (sdm,   one,   two)
@@ -50,7 +49,9 @@
       sdmPut (sdm, eight,  nine)
 
       setInterval (function () {
-        c = noise (one, 45, 9)
+        var c = noise (one, 45, 9),
+            i
+
         draw (id, c)
         ctx.putImageData (id, 1, 1)
 
