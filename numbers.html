@@ -27,7 +27,7 @@
       var canvas = document.getElementById ("canvas"),
           ctx = canvas.getContext ("2d"),
           id = ctx.getImageData (0, 0, 5, 9),
-          sdm = new Array (8 * 45 * 512),
+          sdm = new Array (2 + 8 * 45 * 512),
           one = 0xe21084210c4,
           two = 0x19b844c8462e,
           three = 0xe8c60c4423f,
@@ -37,18 +37,17 @@
           seven = 0x4210888423f,
           eight = 0xe8c6317462e,
           nine = 0x2221d18c62e,
-          a = 14,
           c, i
 
-      sdmReset (sdm)
-      sdmPut (sdm,   one,   two, 45, a)
-      sdmPut (sdm,   two, three, 45, a)
-      sdmPut (sdm, three,  four, 45, a)
-      sdmPut (sdm,  four,  five, 45, a)
-      sdmPut (sdm,  five,   six, 45, a)
-      sdmPut (sdm,   six, seven, 45, a)
-      sdmPut (sdm, seven, eight, 45, a)
-      sdmPut (sdm, eight,  nine, 45, a)
+      sdmReset (sdm, 45, 14)
+      sdmPut (sdm,   one,   two)
+      sdmPut (sdm,   two, three)
+      sdmPut (sdm, three,  four)
+      sdmPut (sdm,  four,  five)
+      sdmPut (sdm,  five,   six)
+      sdmPut (sdm,   six, seven)
+      sdmPut (sdm, seven, eight)
+      sdmPut (sdm, eight,  nine)
 
       setInterval (function () {
         c = noise (one, 45, 9)
@@ -56,7 +55,7 @@
         ctx.putImageData (id, 1, 1)
 
         for (i = 1; i !== 9; ++i) {
-          c = sdmGet (sdm, c, 45, a)
+          c = sdmGet (sdm, c)
           draw (id, c)
           ctx.putImageData (id, i * 6 + 1, 1)
         }

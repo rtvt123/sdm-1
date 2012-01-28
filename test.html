@@ -127,8 +127,8 @@
 
       test ("sdmReset() should format an array", function () {
         var sdm = new Array (10)
-        sdmReset (sdm)
-        deepEqual (sdm, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+        sdmReset (sdm, 1234, 5678)
+        deepEqual (sdm, [0, 0, 0, 0, 0, 0, 0, 0, 1234, 5678])
       })
 
       test ("registerPut() should increment or decrement values in an array based off of the bits in the given value", function () {
@@ -148,17 +148,17 @@
       test ("sdmPut() and sdmGet() should store and retrieve exact key-value pairs", function () {
         var sdm = new Array (1024)
 
-        sdmReset (sdm)
-        sdmPut (sdm, 0xdeadbeef, 0xd15ea5e, 32, 14)
-        equal (sdmGet (sdm, 0xdeadbeef, 32, 14), 0xd15ea5e)
+        sdmReset (sdm, 32, 14)
+        sdmPut (sdm, 0xdeadbeef, 0xd15ea5e)
+        equal (sdmGet (sdm, 0xdeadbeef), 0xd15ea5e)
       })
 
       test ("sdmPut() and sdmGet() should store and retrieve fuzzy key-value pairs", function () {
         var sdm = new Array (1024)
 
-        sdmReset (sdm)
-        sdmPut (sdm, 0xdeadbeef, 0xd15ea5e, 32, 14)
-        equal (sdmGet (sdm, 0xdeadbea7, 32, 14), 0xd15ea5e)
+        sdmReset (sdm, 32, 14)
+        sdmPut (sdm, 0xdeadbeef, 0xd15ea5e)
+        equal (sdmGet (sdm, 0xdeadbea7), 0xd15ea5e)
       })
     </script>
   </body>

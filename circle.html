@@ -27,18 +27,18 @@
       var canvas = document.getElementById ("canvas"),
           ctx = canvas.getContext ("2d"),
           id = ctx.getImageData (0, 0, 7, 7),
-          sdm = new Array (16 * 49 * 50),
+          sdm = new Array (2 + 16 * 49 * 50),
           circle = 0x71f63c78df1c,
           i = 15,
           c
 
-      sdmReset (sdm)
-      sdmPut (sdm, 0, 0, 49, 22)
+      sdmReset (sdm, 49, 17)
+      sdmPut (sdm, 0, 0)
 
       /* Store 16 noisy images. */
       while (i--) {
         c = noise (circle, 49, 9)
-        sdmPut (sdm, c, c, 49, 22)
+        sdmPut (sdm, c, c)
       }
 
       setInterval (function () {
@@ -48,12 +48,12 @@
         ctx.putImageData (id, 1, 1)
 
         /* Retrieve the image from the SDM and draw it. */
-        c = sdmGet (sdm, c, 49, 22)
+        c = sdmGet (sdm, c)
         draw (id, c)
         ctx.putImageData (id, 9, 1)
 
         /* Do it again. */
-        c = sdmGet (sdm, c, 49, 22)
+        c = sdmGet (sdm, c)
         draw (id, c)
         ctx.putImageData (id, 17, 1)
       }, 0)
