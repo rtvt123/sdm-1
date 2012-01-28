@@ -30,10 +30,8 @@
             k = j - 1
 
         while (j--) {
-          data[--i] = bit (bits, k - j) * 255
-          data[--i] = 0
-          data[--i] = 0
-          data[--i] = 0
+          data[--i] = bit (bits, j) * 255
+          i -= 3
         }
       }
 
@@ -57,16 +55,16 @@
       var canvas = document.getElementById ("canvas"),
           ctx = canvas.getContext ("2d"),
           id = ctx.getImageData (0, 0, 5, 9),
-          sdm = new Array (11 * 45 * 128),
-          one = 0x4610842008e,
-          two = 0xe8c426443b3,
-          three = 0x1f884460c62e,
-          four = 0x42201297c42,
-          five = 0x1f8c3c10c62e,
-          six = 0x2220d18c62e,
-          seven = 0x1f8842220084,
-          eight = 0xe8c5d18c62e,
-          nine = 0xe8c63170888,
+          sdm = new Array (11 * 45 * 256),
+          one = 0xe21084210c4,
+          two = 0x19b844c8462e,
+          three = 0xe8c60c4423f,
+          four = 0x847d2910884,
+          five = 0xe8c6107863f,
+          six = 0xe8c63170888,
+          seven = 0x4210888423f,
+          eight = 0xe8c6317462e,
+          nine = 0x2221d18c62e,
           a = 14,
           c, i
 
@@ -92,7 +90,7 @@
           draw (id, c)
           ctx.putImageData (id, i * 6 + 1, 1)
         }
-      }, 125)
+      }, 0)
     </script>
   </body>
 </html>
