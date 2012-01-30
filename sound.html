@@ -1,0 +1,87 @@
+<!doctype html5>
+<html>
+<head>
+</head>
+
+<body>
+<script type="text/javascript">
+/* FIXME: Each tine is a different channel, and plucking it again cancels out
+ * any previous invokation. So, it's probably best to just create an array of
+ * 15 wave things and then trigger them as needed... */
+
+function wave (frequency, decay, start) {
+  frequency *= 2 * Math.PI
+  decay = -1 / decay
+
+  return function (t) {
+    if (t < start)
+      return 0
+
+    t -= start
+    return Math.exp (t * decay) * Math.sin (t * frequency)
+  }
+}
+
+function sum (sounds) {
+  return function (t) {
+    var i = sounds.length,
+        sum = 0
+
+    while (i--)
+      sum += sounds[i] (t)
+
+    return sum
+  }
+}
+
+var frequencies = [
+       523.25,
+       587.33,
+       659.26,
+       698.46,
+       783.99,
+       880.00,
+       987.77,
+      1046.50,
+      1174.66,
+      1318.51,
+      1396.91,
+      1567.98,
+      1760.00,
+      1975.53,
+      2093.00
+    ],
+    sound = sum ([
+      wave (frequencies[ 0], 0.0625,  0 / 8),
+      wave (frequencies[ 1], 0.0625,  1 / 8),
+      wave (frequencies[ 2], 0.0625,  2 / 8),
+      wave (frequencies[ 3], 0.0625,  3 / 8),
+      wave (frequencies[ 4], 0.0625,  4 / 8),
+      wave (frequencies[ 5], 0.0625,  5 / 8),
+      wave (frequencies[ 6], 0.0625,  6 / 8),
+      wave (frequencies[ 7], 0.0625,  7 / 8),
+      wave (frequencies[ 8], 0.0625,  8 / 8),
+      wave (frequencies[ 9], 0.0625,  9 / 8),
+      wave (frequencies[10], 0.0625, 10 / 8),
+      wave (frequencies[11], 0.0625, 11 / 8),
+      wave (frequencies[12], 0.0625, 12 / 8),
+      wave (frequencies[13], 0.0625, 13 / 8),
+      wave (frequencies[ 9], 0.0625, 16 / 8),
+      wave (frequencies[11], 0.0625, 16 / 8),
+      wave (frequencies[14], 0.0625, 16 / 8),
+    ]),
+    audio = new Audio (),
+    i = 33075,
+    buffer = new Array (i),
+    t
+
+while (i--) {
+  t = i / 11025
+  buffer[i] = sound (t)
+}
+
+audio.mozSetup (1, 11025)
+audio.mozWriteAudio (buffer)
+</script>
+</body>
+</html>
