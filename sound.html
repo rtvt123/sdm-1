@@ -34,6 +34,28 @@ function sum (sounds) {
   }
 }
 
+/* FIXME: Not done yet */
+function toSound (id, tempo, frequency) {
+  var frame = Math.floor (tempo * frequency / 60),
+      i = id.width * frame,
+      buffer = new Array (i),
+      x, y, j
+
+  while (i--)
+    buffer[i] = 0
+
+  i = 0
+  for (y = 0; y !== id.height; y++) {
+    for (x = 0; x !== id.width; x++, i += 4) {
+      for (j = 0; j !== frame; j++) {
+        buffer[x * frame + j] += 0
+      }
+    }
+  }
+
+  return buffer
+}
+
 var frequencies = [
        523.25,
        587.33,
