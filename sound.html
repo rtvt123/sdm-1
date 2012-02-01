@@ -4,59 +4,10 @@
 </head>
 
 <body>
+<script type="text/javascript" src="tine.js"></script>
+<script type="text/javascript" src="music_box.js"></script>
 <script type="text/javascript">
-/* FIXME: Each tine is a different channel, and plucking it again cancels out
- * any previous invokation. So, it's probably best to just create an array of
- * 15 wave things and then trigger them as needed... */
-
-function wave (frequency, decay, start) {
-  frequency *= 2 * Math.PI
-  decay = -1 / decay
-
-  return function (t) {
-    if (t < start)
-      return 0
-
-    t -= start
-    return Math.exp (t * decay) * Math.sin (t * frequency)
-  }
-}
-
-function sum (sounds) {
-  return function (t) {
-    var i = sounds.length,
-        sum = 0
-
-    while (i--)
-      sum += sounds[i] (t)
-
-    return sum
-  }
-}
-
-/* FIXME: Not done yet */
-function toSound (id, tempo, frequency) {
-  var frame = Math.floor (tempo * frequency / 60),
-      i = id.width * frame,
-      buffer = new Array (i),
-      x, y, j
-
-  while (i--)
-    buffer[i] = 0
-
-  i = 0
-  for (y = 0; y !== id.height; y++) {
-    for (x = 0; x !== id.width; x++, i += 4) {
-      for (j = 0; j !== frame; j++) {
-        buffer[x * frame + j] += 0
-      }
-    }
-  }
-
-  return buffer
-}
-
-var frequencies = [
+var box = new MusicBox (44100, 1 / 16, [
        523.25,
        587.33,
        659.26,
@@ -72,37 +23,22 @@ var frequencies = [
       1760.00,
       1975.53,
       2093.00
-    ],
-    sound = sum ([
-      wave (frequencies[ 0], 0.0625,  0 / 8),
-      wave (frequencies[ 1], 0.0625,  1 / 8),
-      wave (frequencies[ 2], 0.0625,  2 / 8),
-      wave (frequencies[ 3], 0.0625,  3 / 8),
-      wave (frequencies[ 4], 0.0625,  4 / 8),
-      wave (frequencies[ 5], 0.0625,  5 / 8),
-      wave (frequencies[ 6], 0.0625,  6 / 8),
-      wave (frequencies[ 7], 0.0625,  7 / 8),
-      wave (frequencies[ 8], 0.0625,  8 / 8),
-      wave (frequencies[ 9], 0.0625,  9 / 8),
-      wave (frequencies[10], 0.0625, 10 / 8),
-      wave (frequencies[11], 0.0625, 11 / 8),
-      wave (frequencies[12], 0.0625, 12 / 8),
-      wave (frequencies[13], 0.0625, 13 / 8),
-      wave (frequencies[ 9], 0.0625, 16 / 8),
-      wave (frequencies[11], 0.0625, 16 / 8),
-      wave (frequencies[14], 0.0625, 16 / 8),
     ]),
     audio = new Audio (),
-    i = 33075,
-    buffer = new Array (i),
-    t
+    buffer = new Array (44100),
+    i
 
-while (i--) {
-  t = i / 11025
-  buffer[i] = sound (t)
-}
+box.strike (5)
 
-audio.mozSetup (1, 11025)
+for (i = 0; i !== 22050; i++)
+  buffer[i] = box.next ()
+
+box.strike (6)
+
+for (i = 22050; i !== 44100; i++)
+  buffer[i] = box.next ()
+
+audio.mozSetup (1, 44100)
 audio.mozWriteAudio (buffer)
 </script>
 </body>
