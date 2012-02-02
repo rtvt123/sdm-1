@@ -18,7 +18,7 @@ function loadImage (src, callback) {
 
 function toAudio (id, rate, bpm) {
   var frame = Math.floor (rate * 15 / bpm),
-      box = new MusicBox (rate, 1 / 16, [
+      box = new MusicBox (rate, 0.1, [
          523.25,
          587.33,
          659.26,
