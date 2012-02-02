@@ -4,42 +4,74 @@
 </head>
 
 <body>
-<script type="text/javascript" src="tine.js"></script>
-<script type="text/javascript" src="music_box.js"></script>
+<canvas id="canvas">
+</canvas>
+
+<script type="text/javascript" src="js/tine.js"></script>
+<script type="text/javascript" src="js/music_box.js"></script>
 <script type="text/javascript">
-var box = new MusicBox (44100, 1 / 16, [
-       523.25,
-       587.33,
-       659.26,
-       698.46,
-       783.99,
-       880.00,
-       987.77,
-      1046.50,
-      1174.66,
-      1318.51,
-      1396.91,
-      1567.98,
-      1760.00,
-      1975.53,
-      2093.00
-    ]),
-    audio = new Audio (),
-    buffer = new Array (44100),
-    i
+function loadImage (src, callback) {
+  var img = new Image ()
+  img.onload = function () { callback (img) }
+  img.src = src
+}
 
-box.strike (5)
+function toAudio (id, rate, bpm) {
+  var frame = Math.floor (rate * 30 / bpm),
+      buffer = new Array (frame * id.height),
+      box = new MusicBox (rate, 1 / 16, [
+         523.25,
+         587.33,
+         659.26,
+         698.46,
+         783.99,
+         880.00,
+         987.77,
+        1046.50,
+        1174.66,
+        1318.51,
+        1396.91,
+        1567.98,
+        1760.00,
+        1975.53,
+        2093.00
+      ]),
+      i = 0,
+      j = 0,
+      x, y
 
-for (i = 0; i !== 22050; i++)
-  buffer[i] = box.next ()
+  for (y = 0; y !== id.height; ++y) {
+    /* Strike notes. */
+    for (x = 0; x !== id.width; ++x, i += 4)
+      if (id.data[i] + id.data[i + 1] + id.data[i + 2] === 0)
+        box.strike (x)
 
-box.strike (6)
+    /* Resonate for the frame length. */
+    for (x = frame; x--; ++j)
+      buffer[j] = box.next ()
+  }
 
-for (i = 22050; i !== 44100; i++)
-  buffer[i] = box.next ()
+  return buffer
+}
 
-audio.mozSetup (1, 44100)
-audio.mozWriteAudio (buffer)
+loadImage ("img/sarias-song.png", function (img) {
+  var canvas = document.getElementById ("canvas"),
+      width = img.width,
+      height = img.height
+
+  canvas.width = width
+  canvas.height = height
+
+  var ctx = canvas.getContext ("2d")
+
+  ctx.drawImage (img, 0, 0)
+
+  var id = ctx.getImageData (0, 0, width, height),
+      audio = new Audio ()
+
+  audio.mozSetup (1, 22050)
+  audio.mozWriteAudio (toAudio (id, 22050, 120))
+})
 </script>
 </body>
 </html>
